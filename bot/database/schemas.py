@@ -1,0 +1,26 @@
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from datetime import datetime
+
+
+class LeadCreate(BaseModel):
+
+    user_id: int
+    name: str
+    phone: str
+    email: Optional[EmailStr] = None
+    message: Optional[str] = None
+
+class LeadRead(BaseModel):
+
+    id: int
+    user_id: int
+    name: str
+    phone: str
+    email: Optional[str]
+    message: Optional[str]
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

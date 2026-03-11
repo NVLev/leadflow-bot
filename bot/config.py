@@ -32,7 +32,7 @@ class BotConfig(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_file_encoding="utf-8",
         env_prefix="APP_",
         env_nested_delimiter="__",
@@ -46,3 +46,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+print(settings.model_dump())
