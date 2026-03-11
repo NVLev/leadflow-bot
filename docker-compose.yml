@@ -1,0 +1,60 @@
+services:
+  pg:
+    image: postgres:16-alpine
+    container_name: leadflow_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-leadflow_bot}
+      POSTGRES_USER: ${POSTGRES_USER:-leadflow_bot_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-leadflow_password_secure_123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - leadflow_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-leadflow_bot_user} -d ${POSTGRES_DB:-leadflow_bot}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:latest
+    container_name: leadflow_adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - leadflow_net
+    depends_on:
+      pg:
+        condition: service_healthy
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: leadflow_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: ${PGADMIN_CONFIG_SERVER_MODE:-False}
+    ports:
+      - "5050:80"
+    networks:
+      - leadflow_net
+    depends_on:
+      pg:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+networks:
+  leadflow_net:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local
+  pgadmin_data:
+    driver: local
