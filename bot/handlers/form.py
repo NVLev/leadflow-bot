@@ -9,10 +9,15 @@ from bot.database.schemas import LeadCreate
 from bot.database.db_helper import db_helper
 from bot.utils.validators import validate_phone
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 router = Router()
 
 @router.message(F.text == "📩 Оставить заявку")
 async def start_form(message: Message, state: FSMContext):
+    logger.info("User %s started lead form", message.from_user.id)
 
     await state.set_state(LeadForm.waiting_for_name)
 
@@ -23,6 +28,8 @@ async def start_form(message: Message, state: FSMContext):
 
 @router.message(LeadForm.waiting_for_name)
 async def get_name(message: Message, state: FSMContext):
+
+    logger.info("Name received: %s", message.text)
 
     await state.update_data(name=message.text)
 
@@ -35,6 +42,7 @@ async def get_phone(message: Message, state: FSMContext):
 
     phone = message.text
 
+    logger.info("Phone received: %s", phone)
     if not validate_phone(phone):
         await message.answer("Введите корректный телефон")
         return
@@ -45,33 +53,57 @@ async def get_phone(message: Message, state: FSMContext):
 
     await message.answer("Введите email (или - чтобы пропустить):")
 
-@router.message(LeadForm.waiting_for_phone)
-async def get_phone(message: Message, state: FSMContext):
+@router.message(LeadForm.waiting_for_email)
+async def get_email(message: Message, state: FSMContext):
 
-    phone = message.text
+    email = message.text
 
-    if not validate_phone(phone):
-        await message.answer("Введите корректный телефон")
+    logger.info("Email received: %s", email)
+
+    if email == "-":
+        email = None
+
+    await state.update_data(email=email)
+
+    await state.set_state(LeadForm.waiting_for_message)
+
+    await message.answer("Комментарий к заявке:")
+
+@router.message(LeadForm.waiting_for_message)
+async def get_message(message: Message, state: FSMContext):
+
+    logger.info("Message received: %s", message.text)
+
+    await state.update_data(message=message.text)
+
+    data = await state.get_data()
+
+    logger.info("FSM data: %s", data)
+
+    try:
+
+        lead_data = LeadCreate(
+            user_id=message.from_user.id,
+            name=data["name"],
+            phone=data["phone"],
+            email=data.get("email"),
+            message=data["message"],
+        )
+
+        async for session in db_helper.session_getter():
+
+            await create_lead(session, lead_data)
+
+        logger.info("Lead created successfully")
+
+    except Exception as e:
+
+        logger.exception("Error creating lead")
+
+        await message.answer("Ошибка при создании заявки")
+
         return
 
-    await state.update_data(phone=phone)
+    await message.answer("✅ Спасибо! Ваша заявка принята.")
 
-    await state.set_state(LeadForm.waiting_for_email)
-
-    await message.answer("Введите email (или - чтобы пропустить):")
-
-@router.message(LeadForm.waiting_for_phone)
-async def get_phone(message: Message, state: FSMContext):
-
-    phone = message.text
-
-    if not validate_phone(phone):
-        await message.answer("Введите корректный телефон")
-        return
-
-    await state.update_data(phone=phone)
-
-    await state.set_state(LeadForm.waiting_for_email)
-
-    await message.answer("Введите email (или - чтобы пропустить):")
-
+    await state.clear()

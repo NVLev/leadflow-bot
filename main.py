@@ -6,11 +6,11 @@ from aiogram import Bot, Dispatcher
 from bot.config import settings
 
 from bot.handlers import start, form, common
+from bot.utils.logger import setup_logger
 
+logger = setup_logger()
 
 async def main():
-
-    logging.basicConfig(level=logging.INFO)
 
     bot = Bot(token=settings.bot.token)
 

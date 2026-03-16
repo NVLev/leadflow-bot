@@ -4,11 +4,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.database.models import Lead
 from bot.database.schemas import LeadCreate
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 async def create_lead(
     session: AsyncSession,
     data: LeadCreate,
 ) -> Lead:
+    logger.info("Creating lead for user %s", data.user_id)
 
     lead = Lead(
         user_id=data.user_id,
