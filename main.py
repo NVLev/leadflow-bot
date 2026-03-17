@@ -16,9 +16,9 @@ async def main():
 
     dp = Dispatcher()
 
+    dp.include_router(common.router)
     dp.include_router(start.router)
     dp.include_router(form.router)
-    dp.include_router(common.router)
 
     await dp.start_polling(bot)
 

@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import Integer, String, Text, DateTime
+from sqlalchemy import Integer, String, Text, DateTime, BigInteger
+
+BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
@@ -11,7 +13,7 @@ class Lead(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    user_id: Mapped[int] = mapped_column(Integer)
+    user_id: Mapped[int] = mapped_column(BigInteger)
 
     name: Mapped[str] = mapped_column(String(255))
 

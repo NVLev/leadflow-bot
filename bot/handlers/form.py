@@ -1,7 +1,9 @@
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
+from bot.keyboards.menu import main_menu
+from bot.services.notify_service import notify_admins
 from bot.states.lead_form import LeadForm
 from bot.keyboards.form_kb import cancel_keyboard
 from bot.services.lead_service import create_lead
@@ -91,17 +93,19 @@ async def get_message(message: Message, state: FSMContext):
         )
 
         async for session in db_helper.session_getter():
+            lead = await create_lead(session, lead_data)
 
-            await create_lead(session, lead_data)
-
-        logger.info("Lead created successfully")
+        await notify_admins(message.bot, lead)
 
     except Exception as e:
 
         logger.exception("Error creating lead")
 
-        await message.answer("Ошибка при создании заявки")
-
+        await message.answer(
+            "⚠️ Произошла ошибка. Попробуйте ещё раз.",
+            reply_markup=main_menu()
+        )
+        await state.clear()
         return
 
     await message.answer("✅ Спасибо! Ваша заявка принята.")
