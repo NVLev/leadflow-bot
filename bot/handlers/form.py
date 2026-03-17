@@ -1,6 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+import asyncio
 
 from bot.keyboards.menu import main_menu
 from bot.services.notify_service import notify_admins
@@ -10,6 +11,7 @@ from bot.services.lead_service import create_lead
 from bot.database.schemas import LeadCreate
 from bot.database.db_helper import db_helper
 from bot.utils.validators import validate_phone
+from bot.integrations.google_sheets import google_sheets
 
 import logging
 
@@ -96,6 +98,10 @@ async def get_message(message: Message, state: FSMContext):
             lead = await create_lead(session, lead_data)
 
         await notify_admins(message.bot, lead)
+        await asyncio.to_thread(
+            google_sheets.append_lead,
+            lead
+        )
 
     except Exception as e:
 

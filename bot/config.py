@@ -29,6 +29,9 @@ class BotConfig(BaseModel):
             raise ValueError("BOT_TOKEN must be valid")
         return v
 
+class GoogleConfig(BaseModel):
+    creds_path: str
+    sheet_name: str
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -43,6 +46,7 @@ class Settings(BaseSettings):
     run: RunConfig = Field(default_factory=RunConfig)
     db: DatabaseConfig = Field(default_factory=DatabaseConfig)
     bot: Annotated[BotConfig, Field()]
+    google: GoogleConfig
 
 
 settings = Settings()
