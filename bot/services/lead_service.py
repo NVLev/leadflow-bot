@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models import Lead
 from bot.database.schemas import LeadCreate
+from bot.services.webhook_service import send_lead_to_webhook
 
 import logging
 
@@ -25,8 +26,11 @@ async def create_lead(
     session.add(lead)
 
     await session.commit()
-
     await session.refresh(lead)
+    try:
+        await send_lead_to_webhook(lead)
+    except Exception:
+        logger.exception("Webhook failed but lead is saved")
 
     return lead
 

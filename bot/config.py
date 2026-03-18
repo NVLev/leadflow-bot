@@ -33,6 +33,9 @@ class GoogleConfig(BaseModel):
     creds_path: str
     sheet_name: str
 
+class WebhookConfig(BaseModel):
+    url: str
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -47,6 +50,7 @@ class Settings(BaseSettings):
     db: DatabaseConfig = Field(default_factory=DatabaseConfig)
     bot: Annotated[BotConfig, Field()]
     google: GoogleConfig
+    webhook: WebhookConfig = Field(default_factory=WebhookConfig)
 
 
 settings = Settings()
