@@ -29,15 +29,19 @@ class BotConfig(BaseModel):
             raise ValueError("BOT_TOKEN must be valid")
         return v
 
+
 class GoogleConfig(BaseModel):
     creds_path: str
     sheet_name: str
 
+
 class WebhookConfig(BaseModel):
     url: str = ""
 
+
 class PaginationConfig(BaseModel):
     leads_page_size: int = 5
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(

@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from bot.config import settings
-from bot.handlers import start, form, common, admin
+from bot.handlers import admin, common, form, start
 from bot.utils.logger import setup_logger
 
 logger = setup_logger()

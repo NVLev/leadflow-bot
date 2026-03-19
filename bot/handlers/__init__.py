@@ -1,3 +1,1 @@
-from . import start
-from . import form
-from . import common
+from . import common, form, start

@@ -1,4 +1,5 @@
 import logging
+
 import httpx
 
 from bot.config import settings
@@ -28,10 +29,7 @@ async def send_lead_to_webhook(lead):
 
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            response = await client.post(
-                settings.webhook.url,
-                json=lead_data
-            )
+            response = await client.post(settings.webhook.url, json=lead_data)
 
         logger.info(f"Webhook status: {response.status_code}")
         logger.info(f"Webhook response: {response.text}")

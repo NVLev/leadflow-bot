@@ -1,12 +1,15 @@
 # bot/handlers/admin.py
 
-from aiogram import Router, F, Bot
+import logging
+
+from aiogram import Bot, F, Router
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
 from bot.database.db_helper import db_helper
 from bot.database.enums import LeadStatus
 from bot.database.models import Lead
+from bot.filters.admin import AdminFilter
 from bot.keyboards.admin_kb import (
     STATUS_LABELS,
     STATUS_USER_MESSAGES,
@@ -15,9 +18,6 @@ from bot.keyboards.admin_kb import (
 )
 from bot.services.lead_service import get_leads_page, update_lead_status
 from bot.services.notify_service import format_lead_for_admin
-from bot.filters.admin import AdminFilter
-
-import logging
 
 logger = logging.getLogger(__name__)
 

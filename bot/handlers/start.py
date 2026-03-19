@@ -1,4 +1,4 @@
-from aiogram import Router, F
+from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 
@@ -11,10 +11,10 @@ router = Router()
 async def start(message: Message):
 
     await message.answer(
-        "👋 Добро пожаловать!\n\n"
-        "Вы можете оставить заявку, и мы свяжемся с вами.",
-        reply_markup=main_menu()
+        "👋 Добро пожаловать!\n\n" "Вы можете оставить заявку, и мы свяжемся с вами.",
+        reply_markup=main_menu(),
     )
+
 
 @router.message(F.text == "ℹ️ О сервисе")
 async def info(message: Message):
@@ -26,5 +26,5 @@ async def info(message: Message):
         "удобным способом в течение рабочего дня.\n\n"
         "📞 Если хотите поговорить прямо сейчас — "
         "напишите нам: @your_contact",
-        parse_mode="HTML"
+        parse_mode="HTML",
     )

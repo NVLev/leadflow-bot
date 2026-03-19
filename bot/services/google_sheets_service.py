@@ -1,4 +1,5 @@
 import logging
+
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive",
 ]
 
 
@@ -22,10 +23,7 @@ class GoogleSheetsService:
         self.sheet = self._get_sheet()
 
     def _get_client(self):
-        creds = Credentials.from_service_account_file(
-            self.creds_path,
-            scopes=SCOPES
-        )
+        creds = Credentials.from_service_account_file(self.creds_path, scopes=SCOPES)
         return gspread.authorize(creds)
 
     def _get_sheet(self):
@@ -50,4 +48,3 @@ class GoogleSheetsService:
 
         except Exception:
             logger.exception("Failed to export lead to Google Sheets")
-

@@ -1,6 +1,7 @@
+import logging
 from typing import Any, Sequence
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import settings
@@ -8,9 +9,8 @@ from bot.database.models import Lead
 from bot.database.schemas import LeadCreate
 from bot.services.webhook_service import send_lead_to_webhook
 
-import logging
-
 logger = logging.getLogger(__name__)
+
 
 async def create_lead(
     session: AsyncSession,
@@ -39,8 +39,8 @@ async def create_lead(
 
 
 async def get_leads_page(
-        session: AsyncSession,
-        page: int = 0,
+    session: AsyncSession,
+    page: int = 0,
 ) -> tuple[Sequence[Any], int]:
     """Возвращает страницу заявок и общее количество страниц."""
     page_size = settings.pagination.leads_page_size

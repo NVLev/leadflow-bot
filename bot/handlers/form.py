@@ -1,23 +1,24 @@
-from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
 import asyncio
+import logging
+
+from aiogram import Bot, F, Router
+from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery, Message
 
 from bot.database.db_helper import db_helper
 from bot.database.schemas import LeadCreate
+from bot.integrations.google_sheets import google_sheets
 from bot.keyboards.form_kb import cancel_keyboard, service_keyboard
 from bot.keyboards.menu import main_menu
 from bot.services.lead_service import create_lead
 from bot.services.notify_service import notify_admins
 from bot.states.lead_form import LeadForm
 from bot.utils.validators import validate_phone
-from bot.integrations.google_sheets import google_sheets
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 router = Router()
+
 
 @router.message(F.text == "📩 Оставить заявку")
 async def start_form(message: Message, state: FSMContext):
@@ -58,7 +59,9 @@ async def get_phone(message: Message, state: FSMContext) -> None:
     logger.info("Phone received: %s", phone)
 
     if not validate_phone(phone):
-        await message.answer("Введите корректный номер телефона (например, +79991234567):")
+        await message.answer(
+            "Введите корректный номер телефона (например, +79991234567):"
+        )
         return
 
     await state.update_data(phone=phone)
