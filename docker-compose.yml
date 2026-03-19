@@ -28,6 +28,8 @@ services:
     depends_on:
       pg:
         condition: service_healthy
+    volumes:
+      - ./alembic:/app/alembic
     networks:
       - leadflow_net
     restart: unless-stopped
