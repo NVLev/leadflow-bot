@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 
 from bot.config import settings
 
-from bot.handlers import start, form, common
+from bot.handlers import start, form, common, admin
 from bot.utils.logger import setup_logger
 
 logger = setup_logger()
@@ -19,6 +19,8 @@ async def main():
     dp.include_router(common.router)
     dp.include_router(start.router)
     dp.include_router(form.router)
+    dp.include_router(admin.router)
+
 
     await dp.start_polling(bot)
 

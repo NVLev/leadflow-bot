@@ -34,7 +34,10 @@ class GoogleConfig(BaseModel):
     sheet_name: str
 
 class WebhookConfig(BaseModel):
-    url: str
+    url: str = ""
+
+class PaginationConfig(BaseModel):
+    leads_page_size: int = 5
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -51,6 +54,7 @@ class Settings(BaseSettings):
     bot: Annotated[BotConfig, Field()]
     google: GoogleConfig
     webhook: WebhookConfig = Field(default_factory=WebhookConfig)
+    pagination: PaginationConfig = Field(default_factory=PaginationConfig)
 
 
 settings = Settings()
