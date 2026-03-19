@@ -114,6 +114,7 @@ async def get_message(message: Message, state: FSMContext):
         await state.clear()
         return
 
-    await message.answer("✅ Спасибо! Ваша заявка принята.")
+    await message.answer("✅ Спасибо! Ваша заявка принята.",
+                         reply_markup=main_menu())
 
     await state.clear()
