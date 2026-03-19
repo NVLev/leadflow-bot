@@ -18,6 +18,19 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+  app:
+    build: .
+    container_name: leadflow_app
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-leadflow_bot_user}:${POSTGRES_PASSWORD:-leadflow_password_secure_123}@pg:5432/${POSTGRES_DB:-leadflow_bot}
+    depends_on:
+      pg:
+        condition: service_healthy
+    networks:
+      - leadflow_net
+    restart: unless-stopped
 
   adminer:
     image: adminer:latest

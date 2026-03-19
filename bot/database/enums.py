@@ -8,3 +8,5 @@ class LeadStatus(str, Enum):
     PROCESSED = "processed"
 
     SENT_TO_CRM = "sent_to_crm"
+
+    REJECTED = "rejected"

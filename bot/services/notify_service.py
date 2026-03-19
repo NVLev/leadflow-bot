@@ -2,10 +2,26 @@ import logging
 from aiogram import Bot
 
 from bot.config import settings
+from bot.database.enums import LeadStatus
 from bot.database.models import Lead
+from bot.keyboards.admin_kb import STATUS_LABELS, lead_status_keyboard
 
 logger = logging.getLogger(__name__)
 
+
+def format_lead_for_admin(lead: Lead) -> str:
+    status_label = STATUS_LABELS.get(LeadStatus(lead.status), lead.status)
+    email_line = f"📧 Email: {lead.email}" if lead.email else "📧 Email: —"
+
+    return (
+        f"📥 <b>Новая заявка #{lead.id}</b>\n\n"
+        f"👤 Имя: {lead.name}\n"
+        f"📞 Телефон: {lead.phone}\n"
+        f"{email_line}\n"
+        f"💬 Сообщение: {lead.message}\n\n"
+        f"📊 Статус: {status_label}\n"
+        f"🕐 Время: {lead.created_at.strftime('%d.%m.%Y %H:%M')}"
+    )
 
 async def notify_admins(bot: Bot, lead: Lead):
 
